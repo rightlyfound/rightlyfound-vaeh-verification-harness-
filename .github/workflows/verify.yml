@@ -1,0 +1,36 @@
+name: verify
+
+on: [push]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run verification bundles through ledger executor
+        run: |
+          set -e
+          for b in verify_*.py; do
+            echo "=== Running $b ==="
+            source="${b#verify_}"
+            source="${source%.py}.py"
+            if [ -f "$source" ]; then
+              python3 run_verification.py "$b" --source "$source"
+            else
+              python3 run_verification.py "$b"
+            fi
+          done
+
+      - name: Upload verification ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-ledger
+          path: verification_status.json
+        if: ${{ always() }}

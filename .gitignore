@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+runs/
+factory_out/
+telemetry.jsonl
+telemetry_verify_output.jsonl
+verification_status.json
+.DS_Store
+.env
+.venv/
+venv/
